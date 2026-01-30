@@ -1,0 +1,7 @@
+fastapi[standard]
+tortoise-orm[asyncpg]
+pydantic
+python-dotenv
+aerich
+pwdlib[argon2]
+PyJWT
