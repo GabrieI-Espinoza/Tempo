@@ -1,6 +1,8 @@
 from tortoise.models import Model
 from tortoise import fields
 
+from app.categories.categories import CategoryLabel
+
 
 class Event(Model):
     event_id = fields.UUIDField(pk=True)
@@ -12,6 +14,6 @@ class Event(Model):
     start_time = fields.DatetimeField()
     end_time = fields.DatetimeField()
 
-    category = fields.ForeignKeyField("models.Category", related_name="events")
+    category = fields.CharEnumField(CategoryLabel, default=CategoryLabel.OTHER)
 
     recurring = fields.BooleanField(default=False)

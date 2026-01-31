@@ -8,7 +8,6 @@ TORTOISE_ORM = {
                 "app.tortoise.models.user",
                 "app.tortoise.models.event",
                 "app.tortoise.models.note",
-                "app.tortoise.models.categories",
                 "aerich.models",
             ],
             "default_connection": "default",
