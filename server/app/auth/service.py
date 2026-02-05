@@ -24,16 +24,7 @@ async def register_new_user(data: RegisterRequest):
     # Generate JWT access token
     token = create_access_token(str(user.user_id))
     # Return the access token and user info
-    return {
-        "access_token": token,
-        "token_type": "bearer",
-        "user": {
-            "user_id": user.user_id,
-            "email": user.email,
-            "first_name": user.first_name,
-            "last_name": user.last_name,
-        },
-    }
+    return {"access_token": token, "token_type": "bearer", "user": user}
 
 
 # Function to authenticate a user and generate an access token
@@ -50,13 +41,4 @@ async def authenticate_user(data: LoginRequest):
     # Generate JWT access token
     token = create_access_token(str(user.user_id))
     # Return the access token and user info
-    return {
-        "access_token": token,
-        "token_type": "bearer",
-        "user": {
-            "user_id": user.user_id,
-            "email": user.email,
-            "first_name": user.first_name,
-            "last_name": user.last_name,
-        },
-    }
+    return {"access_token": token, "token_type": "bearer", "user": user}

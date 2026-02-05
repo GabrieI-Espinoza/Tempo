@@ -1,6 +1,7 @@
 from uuid import UUID
 from pydantic import BaseModel, EmailStr, Field
 
+
 # Schema for user registration request
 class RegisterRequest(BaseModel):
     email: EmailStr
@@ -8,16 +9,12 @@ class RegisterRequest(BaseModel):
     first_name: str
     last_name: str
 
+
 # Schema for user login request
 class LoginRequest(BaseModel):
     email: EmailStr
     password: str
 
-# Schema for user login response
-class LoginResponse(BaseModel):
-    access_token: str
-    token_type: str = "bearer"
-    user: UserResponse
 
 # Schema for user response
 class UserResponse(BaseModel):
@@ -26,5 +23,13 @@ class UserResponse(BaseModel):
     first_name: str
     last_name: str
 
+
+# Schema for user login response
+class LoginResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+    user: UserResponse
+
     class Config:
-        from_attributes = True # Enable ORM mode for Tortoise ORM models
+        # Allows this response schema to be created directly from an User model instance
+        from_attributes = True
