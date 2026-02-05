@@ -3,8 +3,8 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import AnyHttpUrl
 from typing import List
 
-
-ENV_PATH = Path(__file__).parents[3] / ".env"
+# Path to the .env file (root)
+ENV_PATH = Path(".") / ".env"
 
 
 # Settings for the application
