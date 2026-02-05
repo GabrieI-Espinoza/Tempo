@@ -9,4 +9,5 @@ class CategoryResponse(BaseModel):
     color_code: ColorCode
 
     class Config:
-        from_attributes = True  # Enable ORM mode for Tortoise ORM models
+        # Allows this response schema to be created directly from a Category model instance
+        from_attributes = True

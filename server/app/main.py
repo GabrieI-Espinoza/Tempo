@@ -6,12 +6,14 @@ from app.core.settings import settings
 
 from app.auth.routes import router as auth_router
 from app.categories.routes import router as categories_router
+from app.event.routes import router as event_router
 
 
 app = FastAPI()
 
 app.include_router(auth_router)
 app.include_router(categories_router)
+app.include_router(event_router)
 
 register_tortoise(
     app,
@@ -20,7 +22,7 @@ register_tortoise(
     add_exception_handlers=True,
 )
 
-# Make note of CORS settings for frontend-backend communication
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[str(origin) for origin in settings.CORS_ORIGINS],
@@ -30,6 +32,7 @@ app.add_middleware(
 )
 
 
+# Test endpoint to verify the server is running
 @app.get("/")
 async def root():
-    return {"message": "Hello, World!"}
+    return {"message": "Hello, Tempo is running!"}
