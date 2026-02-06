@@ -7,6 +7,7 @@ from app.core.settings import settings
 from app.auth.routes import router as auth_router
 from app.categories.routes import router as categories_router
 from app.event.routes import router as event_router
+from app.note.routes import router as note_router
 
 
 app = FastAPI()
@@ -14,6 +15,7 @@ app = FastAPI()
 app.include_router(auth_router)
 app.include_router(categories_router)
 app.include_router(event_router)
+app.include_router(note_router)
 
 register_tortoise(
     app,
