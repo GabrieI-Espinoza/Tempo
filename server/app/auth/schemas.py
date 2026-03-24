@@ -1,5 +1,5 @@
 from uuid import UUID
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
 
 # Schema for user registration request
@@ -30,6 +30,5 @@ class LoginResponse(BaseModel):
     token_type: str = "bearer"
     user: UserResponse
 
-    class Config:
-        # Allows this response schema to be created directly from an User model instance
-        from_attributes = True
+    # Allows this response schema to be created directly from an User model instance
+    model_config = ConfigDict(from_attributes=True)

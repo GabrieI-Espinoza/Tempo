@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from app.categories.categories import CategoryLabel, ColorCode
 
 
@@ -8,6 +8,5 @@ class CategoryResponse(BaseModel):
     label: CategoryLabel
     color_code: ColorCode
 
-    class Config:
-        # Allows this response schema to be created directly from a Category model instance
-        from_attributes = True
+    # Allows this response schema to be created directly from a Category model instance
+    model_config = ConfigDict(from_attributes=True)

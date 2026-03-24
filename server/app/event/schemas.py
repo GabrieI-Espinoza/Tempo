@@ -1,11 +1,11 @@
 from uuid import UUID
 from datetime import datetime
 from typing import Optional
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 from app.categories.categories import CategoryLabel
 
 
-# Base schema for event, shares fields with children  
+# Base schema for event, shares fields with children
 class EventBase(BaseModel):
     title: str = Field(..., min_length=1, max_length=200)
     description: Optional[str] = None
@@ -23,7 +23,7 @@ class EventBase(BaseModel):
         return self
 
 
-# Schema for creating an event, inherits all fields from parent 
+# Schema for creating an event, inherits all fields from parent
 class EventCreate(EventBase):
     pass
 
@@ -43,6 +43,5 @@ class EventUpdate(BaseModel):
 class EventResponse(EventBase):
     event_id: UUID
 
-    class Config:
-        # Allows this response schema to be created directly from an Event model instance
-        from_attributes = True
+    # Allows this response schema to be created directly from an Event model instance
+    model_config = ConfigDict(from_attributes=True)

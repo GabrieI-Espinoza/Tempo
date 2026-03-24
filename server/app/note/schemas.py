@@ -1,7 +1,7 @@
 from uuid import UUID
 from datetime import datetime
 from typing import Optional
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 # Base schema for note, shares fields with children
@@ -26,6 +26,5 @@ class NoteResponse(NoteBase):
     event_id: Optional[UUID] = None
     created_at: datetime
 
-    class Config:
-        # Allows this response schema to be created directly from a Note model instance
-        from_attributes = True
+    # Allows this response schema to be created directly from a Note model instance
+    model_config = ConfigDict(from_attributes=True)
