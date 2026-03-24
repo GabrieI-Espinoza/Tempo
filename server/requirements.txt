@@ -5,3 +5,7 @@ python-dotenv
 aerich
 pwdlib[argon2]
 PyJWT
+pytest
+pytest-asyncio
+httpx
+asgi_lifespan
