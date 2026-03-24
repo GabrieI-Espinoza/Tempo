@@ -48,4 +48,4 @@ jobs:
 
       - name: Run tests
         working-directory: server
-        run: pytest -m pytest -v
+        run: python -m pytest -v
