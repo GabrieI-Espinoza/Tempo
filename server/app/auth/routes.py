@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, status
 from app.auth.dependencies import get_current_user
 from app.auth.schemas import RegisterRequest, LoginRequest, LoginResponse, UserResponse
 from app.auth.service import register_new_user, authenticate_user
@@ -8,7 +8,7 @@ from app.tortoise.models.user import User
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 
-@router.post("/register", response_model=LoginResponse)
+@router.post("/register", response_model=LoginResponse, status_code=status.HTTP_201_CREATED)
 async def register(data: RegisterRequest):
     return await register_new_user(data)
 
