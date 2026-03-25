@@ -30,7 +30,7 @@ async def update_event(event_id: UUID, data: EventUpdate, user: User) -> Event:
     # Validate that the updated end time is not before the updated start time
     if new_end < new_start:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail="End time cannot be before start time",
         )
 

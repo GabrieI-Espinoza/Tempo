@@ -3,7 +3,7 @@ import pytest
 
 @pytest.mark.asyncio
 async def test_register_user(client):
-    # First create user
+    # Register user
     response = await client.post(
         "/auth/register",
         json={
@@ -25,7 +25,7 @@ async def test_register_user(client):
 
 @pytest.mark.asyncio
 async def test_login_user(client):
-    # First create user
+    # Register user
     await client.post(
         "/auth/register",
         json={
@@ -51,7 +51,7 @@ async def test_login_user(client):
 
 @pytest.mark.asyncio
 async def test_get_current_user(client):
-    # First create user
+    # Register user
     register_response = await client.post(
         "/auth/register",
         json={
