@@ -59,7 +59,7 @@ TempoPad is the idea of a lightweight capture space for notes that do not yet be
 ### 1. Clone the repository
 ```bash
 git clone https://github.com/GabrieI-Espinoza/Tempo.git
-cd Tempo-dev
+cd Tempo-main
 ```
 ### 2. Create environment variables
 ```bash
