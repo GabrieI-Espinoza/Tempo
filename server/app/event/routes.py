@@ -1,6 +1,5 @@
 from uuid import UUID
-from typing import List
-from fastapi import APIRouter, Depends, HTTPException, Response, status
+from fastapi import APIRouter, Depends, Response, status
 from app.auth.dependencies import get_current_user
 from app.tortoise.models.user import User
 from app.event.schemas import EventCreate, EventUpdate, EventResponse
@@ -22,7 +21,7 @@ async def create_new_event(
     return await create_event(data, current_user)
 
 
-@router.get("/", response_model=List[EventResponse])
+@router.get("/", response_model=list[EventResponse])
 async def list_user_events(current_user: User = Depends(get_current_user)):
     return await get_user_events(current_user)
 
