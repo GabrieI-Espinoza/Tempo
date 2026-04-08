@@ -1,7 +1,5 @@
 from pathlib import Path
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from pydantic import AnyHttpUrl
-from typing import List
 
 # Path to the .env, adjust as necessary
 ENV_PATH = Path(__file__).parents[3] / ".env"
@@ -22,7 +20,7 @@ class Settings(BaseSettings):
     JWT_ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
 
-    CORS_ORIGINS: List[str] = []
+    CORS_ORIGINS: list[str] = []
 
 
 settings = Settings()

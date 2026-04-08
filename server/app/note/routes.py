@@ -1,5 +1,5 @@
 from uuid import UUID
-from typing import List, Optional
+from typing import Optional
 from fastapi import APIRouter, Depends, status, Response
 from app.auth.dependencies import get_current_user
 from app.tortoise.models.user import User
@@ -17,7 +17,7 @@ async def create_new_note(
     return await create_note(data, current_user)
 
 
-@router.get("/", response_model=List[NoteResponse])
+@router.get("/", response_model=list[NoteResponse])
 async def list_notes(
     event_id: Optional[UUID] = None, current_user: User = Depends(get_current_user)
 ):

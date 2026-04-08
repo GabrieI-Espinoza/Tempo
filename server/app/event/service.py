@@ -1,5 +1,4 @@
 from uuid import UUID
-from typing import List
 from fastapi import HTTPException, status
 from app.tortoise.models.event import Event
 from app.tortoise.models.user import User
@@ -43,7 +42,7 @@ async def update_event(event_id: UUID, data: EventUpdate, user: User) -> Event:
 
 
 # Function to retrieve all events for a specific user
-async def get_user_events(user: User) -> List[Event]:
+async def get_user_events(user: User) -> list[Event]:
     return await Event.filter(user=user).all()
 
 
