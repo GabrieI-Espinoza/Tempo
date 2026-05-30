@@ -1,8 +1,16 @@
 from uuid import UUID
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Optional
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 from app.categories.categories import CategoryLabel
+
+MIN_EVENT_DURATION = timedelta(minutes=15)
+
+
+def validate_15_min_increment(dt: datetime) -> datetime:
+    if dt.minute % 15 != 0 or dt.second != 0 or dt.microsecond != 0:
+        raise ValueError("Time must be on a 15-minute increment (e.g. 10:00, 10:15, 10:30, 10:45)")
+    return dt
 
 
 # Base schema for event, shares fields with children
@@ -15,11 +23,15 @@ class EventBase(BaseModel):
     category: CategoryLabel = CategoryLabel.OTHER
     recurring: bool = False
 
+    @field_validator("start_time", "end_time")
+    @classmethod
+    def check_increment(cls, value: datetime) -> datetime:
+        return validate_15_min_increment(value)
+
     @model_validator(mode="after")
     def validate_time(self):
-        # Enaures that the end time is after the start time
-        if self.end_time < self.start_time:
-            raise ValueError("end time must be after start time")
+        if self.end_time - self.start_time < MIN_EVENT_DURATION:
+            raise ValueError("Event must be at least 15 minutes long")
         return self
 
 

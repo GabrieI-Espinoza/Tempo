@@ -2,7 +2,7 @@ from uuid import UUID
 from fastapi import HTTPException, status
 from app.tortoise.models.event import Event
 from app.tortoise.models.user import User
-from app.event.schemas import EventCreate, EventUpdate
+from app.event.schemas import EventCreate, EventUpdate, MIN_EVENT_DURATION, validate_15_min_increment
 
 
 # Function to create a new event for a user
@@ -26,11 +26,19 @@ async def update_event(event_id: UUID, data: EventUpdate, user: User) -> Event:
     new_start = update_data.get("start_time", event.start_time)
     new_end = update_data.get("end_time", event.end_time)
 
-    # Validate that the updated end time is not before the updated start time
-    if new_end < new_start:
+    for label, value in [("Start time", new_start), ("End time", new_end)]:
+        try:
+            validate_15_min_increment(value)
+        except ValueError:
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail=f"{label} must be on a 15-minute increment",
+            )
+
+    if new_end - new_start < MIN_EVENT_DURATION:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
-            detail="End time cannot be before start time",
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="Event must be at least 15 minutes long",
         )
 
     # Once validation is complete, update the event with the new data
