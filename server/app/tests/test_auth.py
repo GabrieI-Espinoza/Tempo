@@ -8,7 +8,7 @@ async def test_register_user(client):
         "/auth/register",
         json={
             "email": "johndoe@example.com",
-            "password": "strongpassword123",
+            "password": "StrongPassword123",
             "first_name": "John",
             "last_name": "Doe",
         },
@@ -30,7 +30,7 @@ async def test_login_user(client):
         "/auth/register",
         json={
             "email": "johndoe@example.com",
-            "password": "strongpassword123",
+            "password": "StrongPassword123",
             "first_name": "John",
             "last_name": "Doe",
         },
@@ -40,7 +40,7 @@ async def test_login_user(client):
         "/auth/login",
         json={
             "email": "johndoe@example.com",
-            "password": "strongpassword123",
+            "password": "StrongPassword123",
         },
     )
     # Check for status 200 OK
@@ -56,7 +56,7 @@ async def test_get_current_user(client):
         "/auth/register",
         json={
             "email": "johndoe@example.com",
-            "password": "strongpassword123",
+            "password": "StrongPassword123",
             "first_name": "John",
             "last_name": "Doe",
         },

@@ -3,6 +3,7 @@ from httpx import ASGITransport, AsyncClient
 from asgi_lifespan import LifespanManager
 
 from app.main import app
+from app.core.limiter import limiter
 from app.tortoise.models.note import Note
 from app.tortoise.models.event import Event
 from app.tortoise.models.user import User
@@ -28,4 +29,21 @@ async def clear_db(client):
     await Note.all().delete()
     await Event.all().delete()
     await User.all().delete()
+    limiter.reset()
     yield
+
+
+@pytest_asyncio.fixture
+async def authorized_client(client):
+    response = await client.post(
+        "/auth/register",
+        json={
+            "email": "johndoe@example.com",
+            "password": "StrongPassword123",
+            "first_name": "John",
+            "last_name": "Doe",
+        },
+    )
+    token = response.json()["access_token"]
+    client.headers["Authorization"] = f"Bearer {token}"
+    return client
