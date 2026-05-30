@@ -1,6 +1,7 @@
 fastapi[standard]
 tortoise-orm[asyncpg]
 pydantic
+slowapi
 python-dotenv
 aerich
 pwdlib[argon2]

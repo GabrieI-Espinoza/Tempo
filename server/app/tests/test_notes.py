@@ -1,26 +1,4 @@
 import pytest
-import pytest_asyncio
-
-
-@pytest_asyncio.fixture
-async def authorized_client(client):
-    # Register user
-    response = await client.post(
-        "/auth/register",
-        json={
-            "email": "johndoe@example.com",
-            "password": "strongpassword123",
-            "first_name": "John",
-            "last_name": "Doe",
-        },
-    )
-    # Extract token
-    token = response.json()["access_token"]
-
-    # Attach token to client headers, to mimic an authenticated user making requests
-    client.headers["Authorization"] = f"Bearer {token}"
-    # Return the client with the attached token for use in tests
-    return client
 
 
 @pytest.mark.asyncio

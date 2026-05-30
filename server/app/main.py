@@ -3,8 +3,11 @@ from collections.abc import AsyncGenerator
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
 from tortoise.contrib.fastapi import RegisterTortoise
 
+from app.core.limiter import limiter
 from app.core.settings import settings
 from app.tortoise.config import TORTOISE_ORM
 from app.auth.routes import router as auth_router
@@ -43,6 +46,8 @@ def add_routes(app: FastAPI) -> None:
 
 def create_app() -> FastAPI:
     app = FastAPI(title=settings.PROJECT_NAME, lifespan=lifespan)
+    app.state.limiter = limiter
+    app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)  # type: ignore[arg-type]
     add_middleware(app)
     add_routes(app)
 
