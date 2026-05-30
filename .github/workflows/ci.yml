@@ -30,6 +30,7 @@ jobs:
       JWT_SECRET: test_secret
       CORS_ORIGINS: '["http://localhost:3000"]'
       ACCESS_TOKEN_EXPIRE_MINUTES: 30
+      GENERATE_SCHEMAS: "true"
 
     steps:
       - name: Check out repository

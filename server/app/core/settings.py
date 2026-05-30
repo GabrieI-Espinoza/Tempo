@@ -22,5 +22,9 @@ class Settings(BaseSettings):
 
     CORS_ORIGINS: list[str] = []
 
+    PROJECT_NAME: str = "Tempo"
+
+    GENERATE_SCHEMAS: bool = True  # Set to False in production
+
 
 settings = Settings()
