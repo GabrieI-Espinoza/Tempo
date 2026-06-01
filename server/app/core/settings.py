@@ -1,12 +1,11 @@
 from pathlib import Path
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-# Path to the .env, adjust as necessary
 ENV_PATH = Path(__file__).parents[3] / ".env"
 
 
-# Settings for the application
 class Settings(BaseSettings):
+    """Application settings loaded from environment variables and .env"""
 
     model_config = SettingsConfigDict(
         env_file=ENV_PATH,
@@ -24,7 +23,10 @@ class Settings(BaseSettings):
 
     PROJECT_NAME: str = "Tempo"
 
-    GENERATE_SCHEMAS: bool = True  # Set to False in production
+    # Override to False in production and manage schema changes with migrations
+    GENERATE_SCHEMAS: bool = True
+
+    ANTHROPIC_API_KEY: str = ""
 
 
 settings = Settings()
