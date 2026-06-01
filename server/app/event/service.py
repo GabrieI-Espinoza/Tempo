@@ -2,7 +2,21 @@ from uuid import UUID
 from fastapi import HTTPException, status
 from app.tortoise.models.event import Event
 from app.tortoise.models.user import User
-from app.event.schemas import EventCreate, EventUpdate, MIN_EVENT_DURATION, validate_15_min_increment
+from app.event.schemas import (
+    EventCreate,
+    EventUpdate,
+    validate_event_times,
+)
+
+
+# Helper to verify event ownership and existence
+async def validate_event(event_id: UUID, user: User) -> Event:
+    event = await Event.get_or_none(event_id=event_id, user=user)
+    if not event:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Event not found"
+        )
+    return event
 
 
 # Function to create a new event for a user
@@ -12,13 +26,7 @@ async def create_event(data: EventCreate, user: User) -> Event:
 
 # Function to update an existing event for a user
 async def update_event(event_id: UUID, data: EventUpdate, user: User) -> Event:
-    # Try to retrieve the event for the given event_id and user
-    event = await Event.get_or_none(event_id=event_id, user=user)
-    # If the event does not exist, raise a 404
-    if not event:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Event not found"
-        )
+    event = await validate_event(event_id, user)
 
     # Retrieve only the fields that were provided in the update request
     update_data = data.model_dump(exclude_unset=True)
@@ -26,20 +34,13 @@ async def update_event(event_id: UUID, data: EventUpdate, user: User) -> Event:
     new_start = update_data.get("start_time", event.start_time)
     new_end = update_data.get("end_time", event.end_time)
 
-    for label, value in [("Start time", new_start), ("End time", new_end)]:
-        try:
-            validate_15_min_increment(value)
-        except ValueError:
-            raise HTTPException(
-                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                detail=f"{label} must be on a 15-minute increment",
-            )
-
-    if new_end - new_start < MIN_EVENT_DURATION:
+    try:
+        validate_event_times(new_start, new_end)
+    except ValueError as exc:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail="Event must be at least 15 minutes long",
-        )
+            detail=str(exc),
+        ) from exc
 
     # Once validation is complete, update the event with the new data
     event.update_from_dict(update_data)
@@ -56,12 +57,5 @@ async def get_user_events(user: User) -> list[Event]:
 
 # Function to delete an event for a user
 async def delete_user_event(event_id: UUID, user: User) -> None:
-    # Try to retrieve the event for the given event_id and user
-    event = await Event.get_or_none(event_id=event_id, user=user)
-    # If the event does not exist, raise a 404
-    if not event:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Event not found"
-        )
-    # If the event exists, delete it from the database
+    event = await validate_event(event_id, user)
     await event.delete()

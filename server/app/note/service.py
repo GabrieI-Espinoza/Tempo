@@ -1,5 +1,5 @@
 from uuid import UUID
-from typing import List, Optional
+from typing import Optional
 from fastapi import HTTPException, status
 from app.tortoise.models.note import Note
 from app.tortoise.models.event import Event
@@ -41,7 +41,7 @@ async def create_note(data: NoteCreate, user: User) -> Note:
 
 
 # Function to get user notes
-async def get_notes(user: User, event_id: Optional[UUID] = None) -> List[Note]:
+async def get_notes(user: User, event_id: Optional[UUID] = None) -> list[Note]:
     query = Note.filter(user=user)
     # If an event ID is provided, filter notes by that event ID
     if event_id:

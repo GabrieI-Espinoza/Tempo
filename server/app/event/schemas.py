@@ -9,8 +9,15 @@ MIN_EVENT_DURATION = timedelta(minutes=15)
 
 def validate_15_min_increment(dt: datetime) -> datetime:
     if dt.minute % 15 != 0 or dt.second != 0 or dt.microsecond != 0:
-        raise ValueError("Time must be on a 15-minute increment (e.g. 10:00, 10:15, 10:30, 10:45)")
+        raise ValueError("Time must be on a 15-minute increment")
     return dt
+
+
+def validate_event_times(start_time: datetime, end_time: datetime) -> None:
+    if end_time <= start_time:
+        raise ValueError("End time must be after start time")
+    if end_time - start_time < MIN_EVENT_DURATION:
+        raise ValueError("Event must be at least 15 minutes long")
 
 
 # Base schema for event, shares fields with children
@@ -29,9 +36,8 @@ class EventBase(BaseModel):
         return validate_15_min_increment(value)
 
     @model_validator(mode="after")
-    def validate_time(self):
-        if self.end_time - self.start_time < MIN_EVENT_DURATION:
-            raise ValueError("Event must be at least 15 minutes long")
+    def validate_time_range(self):
+        validate_event_times(self.start_time, self.end_time)
         return self
 
 
@@ -49,6 +55,13 @@ class EventUpdate(BaseModel):
     end_time: Optional[datetime] = None
     category: Optional[CategoryLabel] = None
     recurring: Optional[bool] = None
+
+    @field_validator("start_time", "end_time")
+    @classmethod
+    def check_increment(cls, value: Optional[datetime]) -> Optional[datetime]:
+        if value is not None:
+            return validate_15_min_increment(value)
+        return value
 
 
 # Schema for event response
