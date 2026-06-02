@@ -2,7 +2,6 @@ from pydantic import BaseModel, ConfigDict
 from app.categories.categories import CategoryLabel, ColorCode
 
 
-# Schema for category response
 class CategoryResponse(BaseModel):
     key: str
     label: CategoryLabel
