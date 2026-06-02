@@ -1,7 +1,9 @@
-from uuid import UUID
 from datetime import datetime, timedelta
 from typing import Optional
+from uuid import UUID
+
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+
 from app.categories.categories import CategoryLabel
 
 MIN_EVENT_DURATION = timedelta(minutes=15)
@@ -20,9 +22,8 @@ def validate_event_times(start_time: datetime, end_time: datetime) -> None:
         raise ValueError("Event must be at least 15 minutes long")
 
 
-# Base schema for event, shares fields with children
 class EventBase(BaseModel):
-    title: str = Field(..., min_length=1, max_length=200)
+    title: str = Field(min_length=1, max_length=200)
     description: Optional[str] = None
     location: Optional[str] = None
     start_time: datetime
@@ -41,13 +42,15 @@ class EventBase(BaseModel):
         return self
 
 
-# Schema for creating an event, inherits all fields from parent
 class EventCreate(EventBase):
-    pass
+    """Request body for creating a new event."""
+
+    model_config = ConfigDict(extra="forbid")
 
 
-# Schema for updating an event, keeps all fields optional to allow partial updates
 class EventUpdate(BaseModel):
+    """Request body for updating an existing event."""
+
     title: Optional[str] = Field(None, min_length=1, max_length=200)
     description: Optional[str] = None
     location: Optional[str] = None
@@ -55,6 +58,8 @@ class EventUpdate(BaseModel):
     end_time: Optional[datetime] = None
     category: Optional[CategoryLabel] = None
     recurring: Optional[bool] = None
+
+    model_config = ConfigDict(extra="forbid")
 
     @field_validator("start_time", "end_time")
     @classmethod
@@ -64,9 +69,7 @@ class EventUpdate(BaseModel):
         return value
 
 
-# Schema for event response
 class EventResponse(EventBase):
     event_id: UUID
 
-    # Allows this response schema to be created directly from an Event model instance
     model_config = ConfigDict(from_attributes=True)
