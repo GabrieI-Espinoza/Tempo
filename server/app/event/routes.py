@@ -10,7 +10,6 @@ from app.event.service import (
     delete_user_event,
 )
 
-# APIRouter for event routes
 router = APIRouter(prefix="/events", tags=["events"])
 
 

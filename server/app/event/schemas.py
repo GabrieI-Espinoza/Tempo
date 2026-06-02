@@ -1,13 +1,29 @@
-from uuid import UUID
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Optional
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from uuid import UUID
+
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+
 from app.categories.categories import CategoryLabel
 
+MIN_EVENT_DURATION = timedelta(minutes=15)
 
-# Base schema for event, shares fields with children
+
+def validate_15_min_increment(dt: datetime) -> datetime:
+    if dt.minute % 15 != 0 or dt.second != 0 or dt.microsecond != 0:
+        raise ValueError("Time must be on a 15-minute increment")
+    return dt
+
+
+def validate_event_times(start_time: datetime, end_time: datetime) -> None:
+    if end_time <= start_time:
+        raise ValueError("End time must be after start time")
+    if end_time - start_time < MIN_EVENT_DURATION:
+        raise ValueError("Event must be at least 15 minutes long")
+
+
 class EventBase(BaseModel):
-    title: str = Field(..., min_length=1, max_length=200)
+    title: str = Field(min_length=1, max_length=200)
     description: Optional[str] = None
     location: Optional[str] = None
     start_time: datetime
@@ -15,21 +31,26 @@ class EventBase(BaseModel):
     category: CategoryLabel = CategoryLabel.OTHER
     recurring: bool = False
 
+    @field_validator("start_time", "end_time")
+    @classmethod
+    def check_increment(cls, value: datetime) -> datetime:
+        return validate_15_min_increment(value)
+
     @model_validator(mode="after")
-    def validate_time(self):
-        # Enaures that the end time is after the start time
-        if self.end_time < self.start_time:
-            raise ValueError("end time must be after start time")
+    def validate_time_range(self):
+        validate_event_times(self.start_time, self.end_time)
         return self
 
 
-# Schema for creating an event, inherits all fields from parent
 class EventCreate(EventBase):
-    pass
+    """Request body for creating a new event."""
+
+    model_config = ConfigDict(extra="forbid")
 
 
-# Schema for updating an event, keeps all fields optional to allow partial updates
 class EventUpdate(BaseModel):
+    """Request body for updating an existing event."""
+
     title: Optional[str] = Field(None, min_length=1, max_length=200)
     description: Optional[str] = None
     location: Optional[str] = None
@@ -38,10 +59,17 @@ class EventUpdate(BaseModel):
     category: Optional[CategoryLabel] = None
     recurring: Optional[bool] = None
 
+    model_config = ConfigDict(extra="forbid")
 
-# Schema for event response
+    @field_validator("start_time", "end_time")
+    @classmethod
+    def check_increment(cls, value: Optional[datetime]) -> Optional[datetime]:
+        if value is not None:
+            return validate_15_min_increment(value)
+        return value
+
+
 class EventResponse(EventBase):
     event_id: UUID
 
-    # Allows this response schema to be created directly from an Event model instance
     model_config = ConfigDict(from_attributes=True)

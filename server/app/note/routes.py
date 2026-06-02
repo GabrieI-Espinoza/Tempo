@@ -6,7 +6,6 @@ from app.tortoise.models.user import User
 from app.note.schemas import NoteCreate, NoteUpdate, NoteResponse
 from app.note.service import create_note, get_notes, update_note, delete_note
 
-# APIRouter for note routes
 router = APIRouter(prefix="/notes", tags=["notes"])
 
 
@@ -21,9 +20,6 @@ async def create_new_note(
 async def list_notes(
     event_id: Optional[UUID] = None, current_user: User = Depends(get_current_user)
 ):
-    # Handles both cases:
-    # 1. All notes case: GET /notes
-    # 2. Notes for a specific event case: GET /notes?event_id=...
     return await get_notes(current_user, event_id)
 
 
