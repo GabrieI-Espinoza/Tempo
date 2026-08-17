@@ -4,6 +4,9 @@ Tempo is a calendar-centered memory system designed to organize notes around tim
 
 The core idea is that a calendar should capture more than scheduled events. It should also preserve the thoughts, context, and decisions connected to those moments. Instead of treating notes and events as separate systems, Tempo connects them so time itself becomes the organizing structure.
 
+## Performance & Reliability
+Tempo is built to be both fast and dependable. The backend is optimized for high concurrency, capable of handling **2,800+ requests per second** on a single worker with **sub-20ms p95 latency**. It exposes a comprehensive API with **14 RESTful endpoints** for events, notes, and authentication, all backed by a rigorous test suite maintaining **86% code coverage**.
+
 ## Product Vision
 
 ### Calendar as Memory Timeline
@@ -53,6 +56,9 @@ TempoPad is the idea of a lightweight capture space for notes that do not yet be
 - `GET /notes/?event_id={event_id}`
 - `PATCH /notes/{note_id}`
 - `DELETE /notes/{note_id}`
+
+### Assistant (Prototype - Coming Soon)
+- `POST /assistant/chat`
 
 ## Local Setup
 
